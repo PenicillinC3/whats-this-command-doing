@@ -19,7 +19,20 @@
 - 在 Codex 中使用 `$whats-this-command-doing` 显式调用；在 Claude Code 支持斜杠命令的界面中使用 `/whats-this-command-doing`。
 - 如需项目级的更明确提示，可在项目的 `AGENTS.md` 或 `CLAUDE.md` 中添加一条简短说明，要求代理在命令批准请求中应用此 Skill。
 
-自动发现和项目说明可以影响模型行为，但不能保证每次批准请求都包含完整解释，也不能改变原生批准界面。若需要确定性拦截或自定义批准界面，应另行实现并验证 hook 或客户端集成。
+## 始终应用
+
+若要让 Skill 在不同项目中都尽可能稳定地生效，请把下面的规则加入两个软件各自的全局指令文件：
+
+- Codex：`~/.codex/AGENTS.md`（Windows：`C:\Users\<用户名>\.codex\AGENTS.md`）
+- Claude Code：`~/.claude/CLAUDE.md`（Windows：`C:\Users\<用户名>\.claude\CLAUDE.md`）
+
+如果文件不存在，请先创建，再加入：
+
+```markdown
+在请求用户批准任何 Shell 或终端命令之前，始终应用 `whats-this-command-doing` Skill。用用户当前使用的语言，在宿主提供的批准说明或 justification 字段中清楚说明命令的作用、目标、任务目的和重要影响。准确解释当前 Shell 的语义；不确定时明确说明。不得为生成说明而提前执行命令，也不得自行批准。
+```
+
+全局指令有助于提高一致性，但不保证每次批准请求都附带说明，也不会改变宿主的批准界面。若要求确定性强制执行，需要针对宿主配置并验证专用 Hook 或客户端集成。
 
 ## 卸载
 
